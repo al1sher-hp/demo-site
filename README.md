@@ -1,40 +1,46 @@
 # Nilufar Beauty — onlayn yozilish demo
 
-Fictional Tashkent beauty salon demo with a live booking flow and Telegram notifications.
+Toshkentdagi xayoliy go'zallik saloni uchun demo sayt: onlayn yozilish oqimi va Telegram xabarnomasi bilan.
 
-## Setup
+Frontend — Vite + React. Backend — Vercel serverless funksiyalari (`api/`), ma'lumotlar Postgres'da (Neon) saqlanadi.
+
+## O'rnatish
 
 ```
 npm install
 cp .env.example .env
 ```
 
-Fill in `.env` with a bot token and chat id from [@BotFather](https://t.me/BotFather) (create a bot, then message it once and use `https://api.telegram.org/bot<token>/getUpdates` to find your chat id).
+`.env` faylini to'ldiring:
 
-## Run
+- **DATABASE_URL** — Neon loyihangiz dashboardidagi ulanish satri (Connection string). SSL talab qilinadi, Neon buni avtomatik qo'llaydi.
+- **TELEGRAM_BOT_TOKEN** va **TELEGRAM_CHAT_ID** — [@BotFather](https://t.me/BotFather) orqali bot yarating, botga bir marta xabar yuboring, so'ng `https://api.telegram.org/bot<token>/getUpdates` orqali `chat.id` ni toping.
+
+Jadval (`demo_bookings`) birinchi so'rovda avtomatik yaratiladi — alohida migratsiya kerak emas.
+
+## Lokal ishga tushirish
+
+Loyiha Vercel serverless funksiyalaridan foydalangani uchun lokal rivojlantirish `vercel dev` orqali amalga oshiriladi:
 
 ```
+npm i -g vercel   # global CLI (bir marta)
+vercel login      # bir marta
+vercel link       # loyihani ushbu papkaga bog'lash (bir marta)
 npm run dev
 ```
 
-Frontend: http://localhost:5173 (proxies `/api` to the Express server)
-Backend: http://localhost:3001
+`vercel dev` bitta manzilda (odatda http://localhost:3000) ham frontendni, ham `/api/*` funksiyalarini ishga tushiradi va `.env` faylini avtomatik o'qiydi.
 
-## Production
+## Production (Vercel)
 
-```
-npm run build
-npm run start
-```
+Loyihani Vercelga ulang va **Project Settings → Environment Variables** bo'limida uchta o'zgaruvchini kiriting: `DATABASE_URL`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`. Build buyrug'i — `npm run build` (Vite), chiqish papkasi — `dist`. `vercel.json` barcha `/api` bo'lmagan yo'nalishlarni `index.html`ga yo'naltiradi, shu sababli `/yozilish` yoki `/admin` sahifasini yangilash ham to'g'ri ishlaydi.
 
-Single Node process on port 3001 (or `PORT` env var) serves both the built frontend and the API.
+## Marshrutlar
 
-## Routes
+- `/` — bosh sahifa
+- `/yozilish` — onlayn yozilish oqimi
+- `/admin` — bugungi yozilishlar ro'yxati (autentifikatsiyasiz, faqat demo uchun)
 
-- `/` — landing page
-- `/yozilish` — booking wizard
-- `/admin` — today's bookings (no auth, demo only)
+## Ma'lumotlar bazasi
 
-## Storage
-
-Bookings persist to `server/bookings.json` (gitignored). Delete/reset it to clear the demo calendar.
+Yozilishlar Postgres'dagi (Neon) `demo_bookings` jadvalida saqlanadi. `(master_id, date, time)` bo'yicha UNIQUE cheklov bir vaqtning ikki marta band qilinishining oldini oladi.

@@ -34,3 +34,7 @@ export function formatDateUzShort(dateStr) {
   const d = new Date(`${dateStr}T00:00:00`);
   return `${d.getDate()}-${MONTHS_UZ[d.getMonth()]}, ${WEEKDAYS_UZ[d.getDay()]}`;
 }
+
+export function todayIso() {
+  return toIso(new Date());
+}

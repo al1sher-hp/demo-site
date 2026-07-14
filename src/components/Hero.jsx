@@ -11,11 +11,11 @@ export default function Hero() {
       <h1>
         Go'zallikning <em>yangi</em>
         <br />
-        adresi — Toshkentda
+        manzili — Toshkentda
       </h1>
       <p className="hero-subtitle">
         Nilufar Beauty salonida professional ustalar, individual yondashuv va yoqimli muhit sizni kutmoqda.
-        Endi yozilish yanada oson — bir necha bosishda!
+        Navbatga yozilish endi ikki daqiqalik ish.
       </p>
       <div className="hero-actions">
         <button className="btn-primary" onClick={() => navigate('/yozilish')}>

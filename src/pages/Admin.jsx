@@ -1,16 +1,24 @@
 import { useEffect, useState, useCallback } from 'react';
-import { fetchTodayBookings } from '../api.js';
+import { fetchBookingsForDate } from '../api.js';
 import { formatPrice } from '../utils/format.js';
+import { todayIso } from '../utils/date.js';
 
 export default function Admin() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   const load = useCallback(() => {
-    fetchTodayBookings().then((data) => {
-      setBookings(data);
-      setLoading(false);
-    });
+    fetchBookingsForDate(todayIso())
+      .then((data) => {
+        setBookings(data);
+        setLoadError(false);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoadError(true);
+        setLoading(false);
+      });
   }, []);
 
   useEffect(() => {
@@ -29,7 +37,9 @@ export default function Admin() {
         ⟳ Yangilash
       </button>
 
-      {loading ? (
+      {loadError ? (
+        <div className="admin-empty">Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring</div>
+      ) : loading ? (
         <div className="admin-empty">Yuklanmoqda...</div>
       ) : bookings.length === 0 ? (
         <div className="admin-empty">Bugun uchun hali yozilishlar yo'q.</div>

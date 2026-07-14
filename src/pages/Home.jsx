@@ -10,16 +10,26 @@ import { fetchServices, fetchMasters } from '../api.js';
 export default function Home() {
   const [services, setServices] = useState([]);
   const [masters, setMasters] = useState([]);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    fetchServices().then(setServices);
-    fetchMasters().then(setMasters);
+    Promise.all([fetchServices(), fetchMasters()])
+      .then(([s, m]) => {
+        setServices(s);
+        setMasters(m);
+      })
+      .catch(() => setLoadError(true));
   }, []);
 
   return (
     <>
       <Header />
       <Hero />
+      {loadError && (
+        <div className="section-inner" style={{ textAlign: 'center', color: '#c0435a', padding: '0 20px' }}>
+          Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring
+        </div>
+      )}
       {services.length > 0 && <Services services={services} />}
       {masters.length > 0 && <Masters masters={masters} services={services} />}
       <Contact />

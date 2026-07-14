@@ -13,11 +13,3 @@ export const masters = [
 ];
 
 export const workingHours = { start: 9, end: 20 };
-
-export function getTimeSlots() {
-  const slots = [];
-  for (let h = workingHours.start; h < workingHours.end; h++) {
-    slots.push(`${String(h).padStart(2, '0')}:00`);
-  }
-  return slots;
-}

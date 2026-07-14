@@ -19,6 +19,7 @@ export default function Booking() {
   const [services, setServices] = useState([]);
   const [masters, setMasters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     serviceId: preselectedService,
@@ -33,12 +34,17 @@ export default function Booking() {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    Promise.all([fetchServices(), fetchMasters()]).then(([s, m]) => {
-      setServices(s);
-      setMasters(m);
-      setLoading(false);
-      if (preselectedService) setStep(2);
-    });
+    Promise.all([fetchServices(), fetchMasters()])
+      .then(([s, m]) => {
+        setServices(s);
+        setMasters(m);
+        setLoading(false);
+        if (preselectedService) setStep(2);
+      })
+      .catch(() => {
+        setLoadError(true);
+        setLoading(false);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -90,6 +96,14 @@ export default function Booking() {
     } finally {
       setSubmitting(false);
     }
+  }
+
+  if (loadError) {
+    return (
+      <div className="booking-loading">
+        Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring
+      </div>
+    );
   }
 
   if (loading) {

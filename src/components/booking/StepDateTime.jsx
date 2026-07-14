@@ -1,23 +1,34 @@
 import { useEffect, useState } from 'react';
 import { getNext7Days } from '../../utils/date.js';
-import { fetchSlots } from '../../api.js';
+import { TIME_SLOTS } from '../../utils/slots.js';
+import { fetchBookingsForDate } from '../../api.js';
 
 export default function StepDateTime({ masterId, date, time, onChange, onNext, error }) {
   const [days] = useState(getNext7Days);
   const [selectedDate, setSelectedDate] = useState(date || days[0].date);
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     if (!masterId || !selectedDate) return;
     let cancelled = false;
     setLoadingSlots(true);
-    fetchSlots(masterId, selectedDate).then((data) => {
-      if (!cancelled) {
-        setSlots(data);
+    setLoadError(false);
+    fetchBookingsForDate(selectedDate)
+      .then((bookings) => {
+        if (cancelled) return;
+        const bookedTimes = new Set(
+          bookings.filter((b) => b.masterId === masterId).map((b) => b.time),
+        );
+        setSlots(TIME_SLOTS.map((t) => ({ time: t, booked: bookedTimes.has(t) })));
         setLoadingSlots(false);
-      }
-    });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoadError(true);
+        setLoadingSlots(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -60,7 +71,9 @@ export default function StepDateTime({ masterId, date, time, onChange, onNext, e
       {error && <div className="form-error">{error}</div>}
 
       <div className="slots-grid">
-        {loadingSlots ? (
+        {loadError ? (
+          <div className="slots-loading">Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring</div>
+        ) : loadingSlots ? (
           <div className="slots-loading">Yuklanmoqda...</div>
         ) : (
           slots.map((s) => {
