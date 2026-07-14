@@ -14,7 +14,7 @@ export default function StepConfirm({ service, master, date, time, name, phone, 
           <strong>{formatPrice(service?.price || 0)}</strong>
         </div>
         <div className="confirm-row">
-          <span>Usta</span>
+          <span>Mutaxassis</span>
           <strong>{master?.name}</strong>
         </div>
         <div className="confirm-row">

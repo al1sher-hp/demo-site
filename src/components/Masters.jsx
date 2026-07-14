@@ -11,9 +11,9 @@ export default function Masters({ masters, services }) {
       <div className="section-inner">
         <div className="section-head">
           <span className="section-eyebrow">Jamoa</span>
-          <h2 className="section-title">Ustalarimiz</h2>
+          <h2 className="section-title">Mutaxassislarimiz</h2>
           <p className="section-subtitle" style={{ margin: '0 auto' }}>
-            Tajribali va o'z ishining ustasi bo'lgan mutaxassislar.
+            Tajribali va o'z sohasining professional mutaxassislari.
           </p>
         </div>
         <div className="masters-grid">

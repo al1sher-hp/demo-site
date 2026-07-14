@@ -59,7 +59,7 @@ async function handlePost(req, res, pool) {
   const master = masters.find((m) => m.id === masterId);
 
   if (!service || !master || !master.services.includes(serviceId)) {
-    res.status(400).json({ error: "Noto'g'ri xizmat yoki usta tanlandi" });
+    res.status(400).json({ error: "Noto'g'ri xizmat yoki mutaxassis tanlandi" });
     return;
   }
 

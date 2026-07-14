@@ -9,7 +9,7 @@ import StepConfirm from '../components/booking/StepConfirm.jsx';
 import StepSuccess from '../components/booking/StepSuccess.jsx';
 import { fetchServices, fetchMasters, createBooking } from '../api.js';
 
-const STEP_TITLES = ['Xizmat tanlash', 'Usta tanlash', 'Sana va vaqt', "Ma'lumotlaringiz", 'Tasdiqlash'];
+const STEP_TITLES = ['Xizmat tanlash', 'Mutaxassis tanlash', 'Sana va vaqt', "Ma'lumotlaringiz", 'Tasdiqlash'];
 
 export default function Booking() {
   const navigate = useNavigate();

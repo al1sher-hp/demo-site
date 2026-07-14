@@ -34,7 +34,7 @@ export async function sendTelegramNotification(booking) {
     `🆕 Yangi yozilish!\n` +
     `👤 ${booking.name} — ${booking.phone}\n` +
     `💇 ${booking.serviceName} (${formatPrice(booking.price)})\n` +
-    `👩‍🎨 Usta: ${booking.masterName}\n` +
+    `👩‍🎨 Mutaxassis: ${booking.masterName}\n` +
     `🕐 ${formatDateUz(booking.date)}, ${booking.time}`;
 
   const controller = new AbortController();

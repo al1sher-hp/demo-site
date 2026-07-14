@@ -14,7 +14,7 @@ export default function Hero() {
         manzili — Toshkentda
       </h1>
       <p className="hero-subtitle">
-        Nilufar Beauty salonida professional ustalar, individual yondashuv va yoqimli muhit sizni kutmoqda.
+        Nilufar Beauty salonida professional mutaxassislar, individual yondashuv va yoqimli muhit sizni kutmoqda.
         Navbatga yozilish endi ikki daqiqalik ish.
       </p>
       <div className="hero-actions">
@@ -29,7 +29,7 @@ export default function Hero() {
         </div>
         <div className="hero-stat">
           <strong>3</strong>
-          <span>Tajribali usta</span>
+          <span>Tajribali mutaxassis</span>
         </div>
         <div className="hero-stat">
           <strong>09–20</strong>

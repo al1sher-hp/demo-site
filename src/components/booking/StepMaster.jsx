@@ -1,6 +1,6 @@
 export default function StepMaster({ masters, selected, onSelect }) {
   if (masters.length === 0) {
-    return <div className="empty-state">Bu xizmat uchun hozircha usta topilmadi.</div>;
+    return <div className="empty-state">Bu xizmat uchun hozircha mutaxassis topilmadi.</div>;
   }
 
   return (

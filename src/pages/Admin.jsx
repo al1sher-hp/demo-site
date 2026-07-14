@@ -53,7 +53,7 @@ export default function Admin() {
                   {b.name} — {b.phone}
                 </div>
                 <div className="admin-row-meta">
-                  {b.serviceName} ({formatPrice(b.price)}) · Usta: {b.masterName}
+                  {b.serviceName} ({formatPrice(b.price)}) · Mutaxassis: {b.masterName}
                 </div>
               </div>
             </div>
