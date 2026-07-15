@@ -1,17 +1,25 @@
 import { useEffect, useState } from 'react';
 import { getNext7Days } from '../../utils/date.js';
-import { TIME_SLOTS } from '../../utils/slots.js';
+import { generateSlots } from '../../utils/slots.js';
 import { fetchBookingsForDate } from '../../api.js';
 
-export default function StepDateTime({ masterId, date, time, onChange, onNext, error }) {
+export default function StepDateTime({ master, date, time, onChange, onNext, error }) {
   const [days] = useState(getNext7Days);
   const [selectedDate, setSelectedDate] = useState(date || days[0].date);
   const [slots, setSlots] = useState([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const [loadError, setLoadError] = useState(false);
 
+  const weekday = new Date(`${selectedDate}T00:00:00`).getDay();
+  const todaysHours = master?.hours?.find((h) => h.weekday === weekday);
+  const isDayOff = !todaysHours || todaysHours.isDayOff;
+
   useEffect(() => {
-    if (!masterId || !selectedDate) return;
+    if (!master?.id || !selectedDate || isDayOff) {
+      setSlots([]);
+      setLoadingSlots(false);
+      return;
+    }
     let cancelled = false;
     setLoadingSlots(true);
     setLoadError(false);
@@ -19,9 +27,10 @@ export default function StepDateTime({ masterId, date, time, onChange, onNext, e
       .then((bookings) => {
         if (cancelled) return;
         const bookedTimes = new Set(
-          bookings.filter((b) => b.masterId === masterId).map((b) => b.time),
+          bookings.filter((b) => b.masterId === master.id).map((b) => b.time),
         );
-        setSlots(TIME_SLOTS.map((t) => ({ time: t, booked: bookedTimes.has(t) })));
+        const timeSlots = generateSlots(todaysHours.startTime, todaysHours.endTime);
+        setSlots(timeSlots.map((t) => ({ time: t, booked: bookedTimes.has(t) })));
         setLoadingSlots(false);
       })
       .catch(() => {
@@ -32,7 +41,8 @@ export default function StepDateTime({ masterId, date, time, onChange, onNext, e
     return () => {
       cancelled = true;
     };
-  }, [masterId, selectedDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [master?.id, selectedDate, isDayOff]);
 
   function handleDateClick(d) {
     setSelectedDate(d);
@@ -73,6 +83,8 @@ export default function StepDateTime({ masterId, date, time, onChange, onNext, e
       <div className="slots-grid">
         {loadError ? (
           <div className="slots-loading">Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring</div>
+        ) : isDayOff ? (
+          <div className="slots-loading">Bu kuni dam olish kuni</div>
         ) : loadingSlots ? (
           <div className="slots-loading">Yuklanmoqda...</div>
         ) : (

@@ -17,6 +17,12 @@
   --radius-sm: 12px;
   --font-heading: 'Marcellus', 'Georgia', serif;
   --font-body: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --admin-bg: #f6f2ee;
+  --success: #4b9b6e;
+  --success-bg: #e3f3ea;
+  --danger: #c0435a;
+  --danger-bg: #f9e4e8;
 }
 
 * {
@@ -369,14 +375,20 @@ svg {
   color: var(--white);
 }
 
-.avatar-nilufar {
+.avatar-1 {
   background: linear-gradient(135deg, #e8a0a8, #b96b7a);
 }
-.avatar-madina {
+.avatar-2 {
   background: linear-gradient(135deg, #c9a063, #a9793f);
 }
-.avatar-sevara {
+.avatar-3 {
   background: linear-gradient(135deg, #b98ad9, #7a5cae);
+}
+.avatar-4 {
+  background: linear-gradient(135deg, #8ab8d9, #5c8cae);
+}
+.avatar-5 {
+  background: linear-gradient(135deg, #9ec98a, #6a9c5a);
 }
 
 .master-tile-name {
@@ -890,92 +902,566 @@ svg {
   margin-top: auto;
 }
 
-/* ================= ADMIN ================= */
-.admin-screen {
+/* ================= ADMIN PANEL ================= */
+
+.admin-loading {
   min-height: 100vh;
-  background: var(--cream);
-  padding: 20px;
-  max-width: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-light);
+  font-size: 16px;
+  padding: 24px;
+  text-align: center;
+  background: var(--admin-bg);
+}
+
+/* ---- Login ---- */
+.admin-login-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--admin-bg);
+  padding: 24px;
+}
+
+.admin-login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 40px 28px;
+  box-shadow: var(--shadow-soft);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-login-mark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--rose), var(--gold));
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin: 0 auto;
 }
 
-.admin-header {
+.admin-login-card h1 {
+  font-size: 22px;
+}
+
+.admin-login-card p {
+  color: var(--ink-light);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+/* ---- Shell ---- */
+.admin-app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: var(--admin-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 15;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-}
-
-.admin-title {
-  font-family: var(--font-heading);
-  font-size: 24px;
-}
-
-.admin-badge {
-  background: var(--ink);
-  color: var(--white);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 999px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.admin-refresh {
+  padding: 16px 20px;
   background: var(--white);
-  border: 1.5px solid var(--rose-light);
-  color: var(--rose-dark);
+  border-bottom: 1px solid var(--cream-deep);
+}
+
+.admin-topbar-title {
+  font-family: var(--font-heading);
+  font-size: 19px;
+}
+
+.admin-logout-btn {
+  background: none;
+  border: 1.5px solid var(--cream-deep);
+  color: var(--ink-light);
   font-weight: 700;
   font-size: 13px;
-  padding: 8px 16px;
+  padding: 8px 14px;
   border-radius: 999px;
-  margin-bottom: 20px;
+  min-height: 40px;
 }
 
-.admin-list {
+.admin-tabs {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 15;
+  display: flex;
+  background: var(--white);
+  border-top: 1px solid var(--cream-deep);
+}
+
+.admin-tab-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0 10px;
+  min-height: 56px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-light);
+  background: none;
+  border: none;
+  transition: color 0.15s ease;
+}
+
+.admin-tab-btn.active {
+  color: var(--rose-dark);
+}
+
+.admin-tab-icon {
+  font-size: 20px;
+}
+
+.admin-content {
+  flex: 1;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 16px 16px 96px;
+  box-sizing: border-box;
+}
+
+.admin-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%);
+  background: var(--success);
+  color: var(--white);
+  font-weight: 700;
+  font-size: 15px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(75, 155, 110, 0.35);
+  z-index: 30;
+  animation: admin-toast-in 0.18s ease;
+}
+
+@keyframes admin-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+@media (min-width: 720px) {
+  .admin-tabs {
+    position: static;
+    max-width: 720px;
+    margin: 0 auto;
+    border-top: none;
+    border-bottom: 1px solid var(--cream-deep);
+  }
+  .admin-tab-btn {
+    flex-direction: row;
+    gap: 8px;
+    font-size: 15px;
+    min-height: 52px;
+  }
+  .admin-content {
+    padding: 20px 16px 24px;
+  }
+  .admin-toast {
+    bottom: 24px;
+  }
+}
+
+/* ---- Shared: empty state, summary, toggle switch ---- */
+.admin-empty {
+  text-align: center;
+  color: var(--ink-light);
+  padding: 48px 16px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.admin-empty-inline {
+  color: var(--ink-light);
+  font-size: 14px;
+  padding: 8px 4px;
+}
+
+.admin-summary {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.admin-add-btn {
+  margin-bottom: 16px;
+}
+
+.admin-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 48px;
+  height: 30px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.admin-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.admin-toggle-track {
+  position: absolute;
+  inset: 0;
+  background: #d8d0cb;
+  border-radius: 999px;
+  transition: background 0.15s ease;
+}
+
+.admin-toggle input:checked + .admin-toggle-track {
+  background: var(--success);
+}
+
+.admin-toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background: var(--white);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s ease;
+}
+
+.admin-toggle input:checked + .admin-toggle-track .admin-toggle-thumb {
+  transform: translateX(18px);
+}
+
+/* ---- Day strip (Navbatlar) ---- */
+.admin-day-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  margin-bottom: 16px;
+  scrollbar-width: none;
+}
+
+.admin-day-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-day-chip {
+  flex: 0 0 auto;
+  min-width: 58px;
+  min-height: 64px;
+  background: var(--white);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  box-shadow: var(--shadow-card);
+}
+
+.admin-day-chip.active {
+  background: var(--rose-dark);
+  border-color: var(--rose-dark);
+}
+
+.admin-day-chip.active * {
+  color: var(--white) !important;
+}
+
+.admin-day-chip-weekday {
+  font-size: 11px;
+  color: var(--ink-light);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.admin-day-chip-num {
+  font-family: var(--font-heading);
+  font-size: 19px;
+  color: var(--ink);
+}
+
+.admin-day-chip-month {
+  font-size: 11px;
+  color: var(--ink-light);
+}
+
+/* ---- Booking cards (Navbatlar) ---- */
+.admin-booking-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.admin-row {
+.admin-booking-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   background: var(--white);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-card);
-  padding: 16px 18px;
-  display: flex;
-  gap: 14px;
-  align-items: center;
+  padding: 16px;
 }
 
-.admin-row-time {
+.admin-booking-time {
   font-family: var(--font-heading);
-  font-size: 20px;
+  font-size: 22px;
   color: var(--rose-dark);
   min-width: 58px;
   text-align: center;
+  flex-shrink: 0;
 }
 
-.admin-row-body {
+.admin-booking-body {
   flex: 1;
   min-width: 0;
 }
 
-.admin-row-name {
+.admin-booking-name {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
 }
 
-.admin-row-meta {
-  color: var(--ink-light);
-  font-size: 13px;
+.admin-booking-phone {
+  display: inline-block;
+  color: var(--rose-dark);
+  font-weight: 600;
+  font-size: 15px;
   margin-top: 2px;
 }
 
-.admin-empty {
-  text-align: center;
+.admin-booking-meta {
   color: var(--ink-light);
-  padding: 60px 20px;
+  font-size: 13.5px;
+  margin-top: 4px;
+}
+
+.admin-cancel-btn {
+  flex-shrink: 0;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border: none;
+  font-weight: 700;
   font-size: 14px;
+  padding: 0 16px;
+  min-height: 48px;
+  border-radius: 12px;
+}
+
+/* ---- Entity cards (Mutaxassislar / Xizmatlar lists) ---- */
+.admin-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-entity-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 14px;
+}
+
+.admin-entity-card.inactive {
+  opacity: 0.6;
+}
+
+.admin-entity-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 0;
+  min-height: 48px;
+}
+
+.admin-entity-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.admin-entity-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-entity-name {
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-inactive-badge {
+  font-size: 11px;
+  font-weight: 700;
+  background: var(--cream-deep);
+  color: var(--ink-light);
+  padding: 2px 9px;
+  border-radius: 999px;
+}
+
+.admin-entity-meta {
+  color: var(--ink-light);
+  font-size: 13.5px;
+  margin-top: 4px;
+}
+
+.admin-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.admin-chip {
+  background: var(--rose-light);
+  color: var(--rose-dark);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* ---- Forms (add/edit master or service) ---- */
+.admin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 24px;
+}
+
+.admin-form-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.admin-form-title {
+  font-family: var(--font-heading);
+  font-size: 19px;
+}
+
+.admin-checkbox-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.admin-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 4px;
+  font-size: 15px;
+  min-height: 48px;
+}
+
+.admin-checkbox-row input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.admin-schedule {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+
+.admin-schedule-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--cream-deep);
+  font-size: 15px;
+  min-height: 48px;
+}
+
+.admin-schedule-row:last-child {
+  border-bottom: none;
+}
+
+.admin-schedule-day {
+  flex: 0 0 96px;
+  font-weight: 600;
+}
+
+.admin-schedule-off {
+  color: var(--ink-light);
+  font-size: 14px;
+}
+
+.admin-schedule-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-schedule-time select {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 6px;
+  border-radius: 10px;
+  border: 1.5px solid var(--rose-light);
+  font-size: 15px;
+  background: var(--white);
+  color: var(--ink);
 }

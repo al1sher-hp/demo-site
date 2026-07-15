@@ -1,28 +1,5 @@
-import { services, masters } from './_data.js';
-import { getPool, ensureTable } from './_db.js';
+import { getPool, ensureBookingsTable, ensureCoreTables } from './_db.js';
 import { sendTelegramNotification } from './_telegram.js';
-
-const BOOKING_COLUMNS = `
-  id,
-  service_id AS "serviceId",
-  master_id AS "masterId",
-  date,
-  time,
-  client_name AS "name",
-  client_phone AS "phone",
-  created_at AS "createdAt"
-`;
-
-function enrich(row) {
-  const service = services.find((s) => s.id === row.serviceId);
-  const master = masters.find((m) => m.id === row.masterId);
-  return {
-    ...row,
-    serviceName: service?.name ?? row.serviceId,
-    masterName: master?.name ?? row.masterId,
-    price: service?.price ?? null,
-  };
-}
 
 async function handleGet(req, res, pool) {
   const { date, masterId } = req.query;
@@ -40,11 +17,11 @@ async function handleGet(req, res, pool) {
 
   const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
   const { rows } = await pool.query(
-    `SELECT ${BOOKING_COLUMNS} FROM demo_bookings ${where} ORDER BY time ASC`,
+    `SELECT master_id AS "masterId", date, time FROM demo_bookings ${where} ORDER BY time ASC`,
     params,
   );
 
-  res.status(200).json(rows.map(enrich));
+  res.status(200).json(rows);
 }
 
 async function handlePost(req, res, pool) {
@@ -55,10 +32,20 @@ async function handlePost(req, res, pool) {
     return;
   }
 
-  const service = services.find((s) => s.id === serviceId);
-  const master = masters.find((m) => m.id === masterId);
+  const { rows: serviceRows } = await pool.query(
+    'SELECT id, name, price FROM services WHERE id = $1 AND active = true',
+    [serviceId],
+  );
+  const { rows: masterRows } = await pool.query(
+    'SELECT id, name FROM masters WHERE id = $1 AND active = true',
+    [masterId],
+  );
+  const { rows: linkRows } = await pool.query(
+    'SELECT 1 FROM master_services WHERE master_id = $1 AND service_id = $2',
+    [masterId, serviceId],
+  );
 
-  if (!service || !master || !master.services.includes(serviceId)) {
+  if (serviceRows.length === 0 || masterRows.length === 0 || linkRows.length === 0) {
     res.status(400).json({ error: "Noto'g'ri xizmat yoki mutaxassis tanlandi" });
     return;
   }
@@ -68,7 +55,8 @@ async function handlePost(req, res, pool) {
     ({ rows } = await pool.query(
       `INSERT INTO demo_bookings (service_id, master_id, date, time, client_name, client_phone)
        VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING ${BOOKING_COLUMNS}`,
+       RETURNING id, service_id AS "serviceId", master_id AS "masterId", date, time,
+                 client_name AS "name", client_phone AS "phone", created_at AS "createdAt"`,
       [serviceId, masterId, date, time, String(name).trim(), String(phone).trim()],
     ));
   } catch (err) {
@@ -79,7 +67,12 @@ async function handlePost(req, res, pool) {
     throw err;
   }
 
-  const booking = enrich(rows[0]);
+  const booking = {
+    ...rows[0],
+    serviceName: serviceRows[0].name,
+    masterName: masterRows[0].name,
+    price: serviceRows[0].price,
+  };
 
   try {
     await sendTelegramNotification(booking);
@@ -93,7 +86,7 @@ async function handlePost(req, res, pool) {
 export default async function handler(req, res) {
   try {
     const pool = getPool();
-    await ensureTable();
+    await Promise.all([ensureBookingsTable(), ensureCoreTables()]);
 
     if (req.method === 'GET') {
       await handleGet(req, res, pool);

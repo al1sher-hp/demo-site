@@ -1,3 +1,5 @@
+import { avatarClassFor } from '../utils/avatar.js';
+
 export default function Masters({ masters, services }) {
   function specialtiesFor(master) {
     return master.services
@@ -19,10 +21,9 @@ export default function Masters({ masters, services }) {
         <div className="masters-grid">
           {masters.map((m) => (
             <div className="master-tile" key={m.id}>
-              <div className={`master-tile-avatar avatar-${m.id}`}>{m.name[0]}</div>
+              <div className={`master-tile-avatar ${avatarClassFor(m.id)}`}>{m.name[0]}</div>
               <div className="master-tile-name">{m.name}</div>
               <div className="master-tile-role">{specialtiesFor(m)}</div>
-              <div className="master-tile-rating">⭐ {m.rating}</div>
             </div>
           ))}
         </div>

@@ -1,10 +1,11 @@
-const MONTHS_UZ = [
+export const MONTHS_UZ = [
   'yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun',
   'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr',
 ];
 
-const WEEKDAYS_SHORT_UZ = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'];
-const WEEKDAYS_UZ = ['yakshanba', 'dushanba', 'seshanba', 'chorshanba', 'payshanba', 'juma', 'shanba'];
+export const WEEKDAYS_SHORT_UZ = ['Yak', 'Dush', 'Sesh', 'Chor', 'Pay', 'Jum', 'Shan'];
+export const WEEKDAYS_UZ = ['yakshanba', 'dushanba', 'seshanba', 'chorshanba', 'payshanba', 'juma', 'shanba'];
+export const WEEKDAYS_FULL_UZ = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
 
 function toIso(d) {
   const y = d.getFullYear();
@@ -13,10 +14,10 @@ function toIso(d) {
   return `${y}-${m}-${day}`;
 }
 
-export function getNext7Days() {
+function buildDayRange(startOffset, endOffset) {
   const days = [];
   const today = new Date();
-  for (let i = 0; i < 7; i++) {
+  for (let i = startOffset; i <= endOffset; i++) {
     const d = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
     days.push({
       date: toIso(d),
@@ -27,6 +28,14 @@ export function getNext7Days() {
     });
   }
   return days;
+}
+
+export function getNext7Days() {
+  return buildDayRange(0, 6);
+}
+
+export function getDayRange(startOffset, endOffset) {
+  return buildDayRange(startOffset, endOffset);
 }
 
 export function formatDateUzShort(dateStr) {

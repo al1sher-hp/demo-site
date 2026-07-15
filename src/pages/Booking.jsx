@@ -157,7 +157,7 @@ export default function Booking() {
         )}
         {step === 3 && (
           <StepDateTime
-            masterId={form.masterId}
+            master={selectedMaster}
             date={form.date}
             time={form.time}
             onChange={update}
