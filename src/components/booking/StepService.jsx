@@ -7,6 +7,7 @@ export default function StepService({ services, selected, onSelect }) {
       {services.map((s) => (
         <button
           key={s.id}
+          type="button"
           className={`service-card ${selected === s.id ? 'active' : ''}`}
           onClick={() => onSelect(s.id)}
         >

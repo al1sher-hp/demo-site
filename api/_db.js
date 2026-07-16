@@ -70,9 +70,13 @@ async function setupCoreTables() {
     CREATE TABLE IF NOT EXISTS masters (
       id TEXT PRIMARY KEY,
       name TEXT NOT NULL,
-      active BOOLEAN NOT NULL DEFAULT true
+      active BOOLEAN NOT NULL DEFAULT true,
+      rating NUMERIC(2, 1) NOT NULL DEFAULT 4.9
     )
   `);
+  // Column added after the initial release — ALTER ... ADD COLUMN IF NOT EXISTS
+  // migrates already-deployed databases without a separate migration step.
+  await pool.query(`ALTER TABLE masters ADD COLUMN IF NOT EXISTS rating NUMERIC(2, 1) NOT NULL DEFAULT 4.9`);
 
   await pool.query(`
     CREATE TABLE IF NOT EXISTS master_services (
@@ -114,8 +118,8 @@ async function seedIfEmpty(pool) {
 
     for (const m of SEED_MASTERS) {
       await client.query(
-        `INSERT INTO masters (id, name) VALUES ($1, $2) ON CONFLICT (id) DO NOTHING`,
-        [m.id, m.name],
+        `INSERT INTO masters (id, name, rating) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`,
+        [m.id, m.name, m.rating],
       );
 
       for (const serviceId of m.services) {

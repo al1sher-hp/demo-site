@@ -25,7 +25,7 @@ export default function Services({ services }) {
                 className="service-tile-cta"
                 onClick={() => navigate('/yozilish', { state: { serviceId: s.id } })}
               >
-                Yozilish →
+                Navbat olish →
               </button>
             </div>
           ))}

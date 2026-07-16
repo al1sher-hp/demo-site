@@ -10,9 +10,13 @@ function validateMasterFields(body) {
     ? body.serviceIds.filter((s) => typeof s === 'string')
     : [];
   const hours = Array.isArray(body.hours) ? body.hours : [];
+  const rating = body.rating === undefined || body.rating === '' ? 4.9 : Number(body.rating);
 
   if (!name) return { error: 'Mutaxassis ismini kiriting' };
   if (hours.length !== 7) return { error: "Haftalik jadval to'liq emas" };
+  if (!Number.isFinite(rating) || rating < 0 || rating > 5) {
+    return { error: "Reytingni 0 dan 5 gacha kiriting" };
+  }
 
   const normalizedHours = [];
   for (let weekday = 0; weekday <= 6; weekday++) {
@@ -34,7 +38,7 @@ function validateMasterFields(body) {
     normalizedHours.push({ weekday, isDayOff, startTime, endTime });
   }
 
-  return { name, serviceIds, hours: normalizedHours };
+  return { name, serviceIds, hours: normalizedHours, rating };
 }
 
 async function replaceServicesAndHours(client, masterId, serviceIds, hours) {
@@ -60,7 +64,7 @@ async function fetchMasters(pool, onlyId) {
   const params = onlyId ? [onlyId] : [];
   const where = onlyId ? 'WHERE id = $1' : '';
   const { rows: masterRows } = await pool.query(
-    `SELECT id, name, active FROM masters ${where} ORDER BY name`,
+    `SELECT id, name, active, rating::float AS rating FROM masters ${where} ORDER BY name`,
     params,
   );
   if (masterRows.length === 0) return [];
@@ -107,7 +111,11 @@ export default async function handler(req, res) {
       const client = await pool.connect();
       try {
         await client.query('BEGIN');
-        await client.query('INSERT INTO masters (id, name) VALUES ($1, $2)', [id, parsed.name]);
+        await client.query('INSERT INTO masters (id, name, rating) VALUES ($1, $2, $3)', [
+          id,
+          parsed.name,
+          parsed.rating,
+        ]);
         await replaceServicesAndHours(client, id, parsed.serviceIds, parsed.hours);
         await client.query('COMMIT');
       } catch (err) {
@@ -154,8 +162,8 @@ export default async function handler(req, res) {
       try {
         await client.query('BEGIN');
         const result = await client.query(
-          'UPDATE masters SET name = $2, active = $3 WHERE id = $1 RETURNING id',
-          [id, parsed.name, active !== false],
+          'UPDATE masters SET name = $2, active = $3, rating = $4 WHERE id = $1 RETURNING id',
+          [id, parsed.name, active !== false, parsed.rating],
         );
         if (result.rows.length === 0) {
           await client.query('ROLLBACK');

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getNext7Days } from '../../utils/date.js';
+import { getNext7Days, formatDateUzShort, getTashkentMinutesNow } from '../../utils/date.js';
 import { generateSlots } from '../../utils/slots.js';
 import { fetchBookingsForDate } from '../../api.js';
+
+const PAST_BUFFER_MINUTES = 30;
 
 export default function StepDateTime({ master, date, time, onChange, onNext, error }) {
   const [days] = useState(getNext7Days);
@@ -53,14 +55,16 @@ export default function StepDateTime({ master, date, time, onChange, onNext, err
     onChange({ date: selectedDate, time: t });
   }
 
-  const now = new Date();
   const isToday = selectedDate === days[0].date;
+  const nowMinutes = getTashkentMinutesNow();
 
   function isPast(slotTime) {
     if (!isToday) return false;
-    const [h] = slotTime.split(':').map(Number);
-    return h <= now.getHours();
+    const [h, m] = slotTime.split(':').map(Number);
+    return h * 60 + m < nowMinutes + PAST_BUFFER_MINUTES;
   }
+
+  const canContinue = Boolean(selectedDate && time);
 
   return (
     <div className="step-datetime">
@@ -68,8 +72,11 @@ export default function StepDateTime({ master, date, time, onChange, onNext, err
         {days.map((d) => (
           <button
             key={d.date}
+            type="button"
             className={`date-chip ${selectedDate === d.date ? 'active' : ''}`}
             onClick={() => handleDateClick(d.date)}
+            aria-label={formatDateUzShort(d.date)}
+            aria-pressed={selectedDate === d.date}
           >
             <span className="date-chip-weekday">{d.isToday ? 'Bugun' : d.weekdayShort}</span>
             <span className="date-chip-num">{d.dayNum}</span>
@@ -93,8 +100,10 @@ export default function StepDateTime({ master, date, time, onChange, onNext, err
             return (
               <button
                 key={s.time}
+                type="button"
                 className={`slot-btn ${time === s.time ? 'active' : ''} ${disabled ? 'disabled' : ''}`}
                 disabled={disabled}
+                aria-disabled={disabled}
                 onClick={() => handleTimeClick(s.time)}
               >
                 {s.time}
@@ -104,7 +113,13 @@ export default function StepDateTime({ master, date, time, onChange, onNext, err
         )}
       </div>
 
-      <button className="btn-primary btn-fixed-bottom" disabled={!selectedDate || !time} onClick={onNext}>
+      <button
+        type="button"
+        className="btn-primary btn-fixed-bottom"
+        disabled={!canContinue}
+        aria-disabled={!canContinue}
+        onClick={onNext}
+      >
         Davom etish
       </button>
     </div>

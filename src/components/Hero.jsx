@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import HeroIllustration from './HeroIllustration.jsx';
+import { StarIcon } from './icons/UiIcons.jsx';
 
 export default function Hero() {
   const navigate = useNavigate();
@@ -7,7 +8,10 @@ export default function Hero() {
   return (
     <section className="hero">
       <HeroIllustration />
-      <div className="hero-badge">⭐ 4.9 · 500+ mamnun mijoz</div>
+      <div className="hero-badge">
+        <StarIcon className="hero-badge-icon" />
+        4.9 · 500+ mamnun mijoz
+      </div>
       <h1>
         Go'zallikning <em>yangi</em>
         <br />
@@ -19,7 +23,7 @@ export default function Hero() {
       </p>
       <div className="hero-actions">
         <button className="btn-primary" onClick={() => navigate('/yozilish')}>
-          Onlayn yozilish
+          Onlayn navbat olish
         </button>
       </div>
       <div className="hero-stats">

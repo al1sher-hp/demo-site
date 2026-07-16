@@ -31,7 +31,7 @@ export default function ServicesTab({ showToast }) {
   async function handleToggleActive(service) {
     try {
       await toggleServiceActive(service.id, !service.active);
-      showToast(service.active ? "O'chirildi ✓" : 'Yoqildi ✓');
+      showToast(service.active ? "O'chirildi" : 'Yoqildi');
       load();
     } catch {
       showToast("Bajarilmadi, qayta urinib ko'ring");
@@ -45,7 +45,7 @@ export default function ServicesTab({ showToast }) {
         onDone={() => {
           setEditing(null);
           load();
-          showToast('Saqlandi ✓');
+          showToast('Saqlandi');
         }}
         onCancel={() => setEditing(null)}
       />

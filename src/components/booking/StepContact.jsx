@@ -40,7 +40,13 @@ export default function StepContact({ name, phone, onChange, onNext }) {
       />
       {touched && !phoneValid && <div className="form-error">Telefon raqamni to'liq kiriting</div>}
 
-      <button className="btn-primary btn-fixed-bottom" disabled={!canContinue} onClick={onNext}>
+      <button
+        type="button"
+        className="btn-primary btn-fixed-bottom"
+        disabled={!canContinue}
+        aria-disabled={!canContinue}
+        onClick={onNext}
+      >
         Davom etish
       </button>
     </div>

@@ -1,26 +1,31 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { getDayRange, todayIso, formatDateUzShort } from '../../utils/date.js';
 import { formatPrice } from '../../utils/format.js';
 import { fetchAdminBookings, cancelBooking } from '../../adminApi.js';
 
-const DAYS = getDayRange(-7, 30);
+const DAYS = getDayRange(-7, 14);
 
-export default function BookingsTab({ showToast }) {
+export default function BookingsTab({ showToast, askConfirm }) {
   const today = todayIso();
   const [selectedDate, setSelectedDate] = useState(today);
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const requestRef = useRef({ id: 0, date: null });
 
   const load = useCallback((date) => {
+    const requestId = ++requestRef.current.id;
+    requestRef.current.date = date;
     setLoading(true);
     setLoadError(false);
     fetchAdminBookings(date)
       .then((data) => {
+        if (requestRef.current.id !== requestId) return;
         setBookings(data);
         setLoading(false);
       })
       .catch(() => {
+        if (requestRef.current.id !== requestId) return;
         setLoadError(true);
         setLoading(false);
       });
@@ -39,11 +44,18 @@ export default function BookingsTab({ showToast }) {
   }, [selectedDate, load]);
 
   async function handleCancel(booking) {
-    if (!window.confirm("Rostdan o'chirasizmi? Bu qaytarilmaydi.")) return;
+    const ok = await askConfirm({
+      title: 'Navbatni bekor qilasizmi?',
+      body: "Bu amalni qaytarib bo'lmaydi. Mijozning navbati o'chiriladi va vaqt yana bo'sh bo'ladi.",
+      confirmLabel: 'Ha, bekor qilish',
+      cancelLabel: 'Ortga',
+      destructive: true,
+    });
+    if (!ok) return;
     try {
       await cancelBooking(booking.id);
       setBookings((list) => list.filter((b) => b.id !== booking.id));
-      showToast('Bekor qilindi ✓');
+      showToast('Bekor qilindi');
     } catch {
       showToast("Bekor qilib bo'lmadi, qayta urinib ko'ring");
     }
@@ -60,6 +72,8 @@ export default function BookingsTab({ showToast }) {
             key={d.date}
             className={`admin-day-chip ${selectedDate === d.date ? 'active' : ''}`}
             onClick={() => setSelectedDate(d.date)}
+            aria-label={formatDateUzShort(d.date)}
+            aria-pressed={selectedDate === d.date}
           >
             <span className="admin-day-chip-weekday">{d.isToday ? 'Bugun' : d.weekdayShort}</span>
             <span className="admin-day-chip-num">{d.dayNum}</span>

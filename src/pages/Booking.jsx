@@ -9,7 +9,7 @@ import StepConfirm from '../components/booking/StepConfirm.jsx';
 import StepSuccess from '../components/booking/StepSuccess.jsx';
 import { fetchServices, fetchMasters, createBooking } from '../api.js';
 
-const STEP_TITLES = ['Xizmat tanlash', 'Mutaxassis tanlash', 'Sana va vaqt', "Ma'lumotlaringiz", 'Tasdiqlash'];
+const STEP_TITLES = ['Xizmatni tanlang', 'Mutaxassisni tanlang', 'Sana va vaqt', "Ma'lumotlaringiz", 'Tasdiqlash'];
 
 export default function Booking() {
   const navigate = useNavigate();
@@ -98,18 +98,6 @@ export default function Booking() {
     }
   }
 
-  if (loadError) {
-    return (
-      <div className="booking-loading">
-        Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring
-      </div>
-    );
-  }
-
-  if (loading) {
-    return <div className="booking-loading">Yuklanmoqda...</div>;
-  }
-
   if (success) {
     return (
       <div className="booking-screen">
@@ -124,6 +112,8 @@ export default function Booking() {
     );
   }
 
+  const ready = !loading && !loadError;
+
   return (
     <div className="booking-screen">
       <div className="booking-topbar">
@@ -133,51 +123,59 @@ export default function Booking() {
         <div className="booking-title">{STEP_TITLES[step - 1]}</div>
         <div style={{ width: 40 }} />
       </div>
-      <ProgressBar step={step} total={5} />
+      {ready && <ProgressBar step={step} total={5} />}
       <div className="booking-content">
-        {step === 1 && (
-          <StepService
-            services={services}
-            selected={form.serviceId}
-            onSelect={(id) => {
-              update({ serviceId: id, masterId: null });
-              goNext();
-            }}
-          />
-        )}
-        {step === 2 && (
-          <StepMaster
-            masters={availableMasters}
-            selected={form.masterId}
-            onSelect={(id) => {
-              update({ masterId: id });
-              goNext();
-            }}
-          />
-        )}
-        {step === 3 && (
-          <StepDateTime
-            master={selectedMaster}
-            date={form.date}
-            time={form.time}
-            onChange={update}
-            onNext={goNext}
-            error={submitError}
-          />
-        )}
-        {step === 4 && <StepContact name={form.name} phone={form.phone} onChange={update} onNext={goNext} />}
-        {step === 5 && (
-          <StepConfirm
-            service={selectedService}
-            master={selectedMaster}
-            date={form.date}
-            time={form.time}
-            name={form.name}
-            phone={form.phone}
-            onConfirm={handleConfirm}
-            submitting={submitting}
-            error={submitError}
-          />
+        {loadError ? (
+          <div className="booking-inline-message">Ma'lumotlarni yuklab bo'lmadi — sahifani yangilab ko'ring</div>
+        ) : loading ? (
+          <div className="booking-inline-message">Yuklanmoqda...</div>
+        ) : (
+          <>
+            {step === 1 && (
+              <StepService
+                services={services}
+                selected={form.serviceId}
+                onSelect={(id) => {
+                  update({ serviceId: id, masterId: null });
+                  goNext();
+                }}
+              />
+            )}
+            {step === 2 && (
+              <StepMaster
+                masters={availableMasters}
+                selected={form.masterId}
+                onSelect={(id) => {
+                  update({ masterId: id });
+                  goNext();
+                }}
+              />
+            )}
+            {step === 3 && (
+              <StepDateTime
+                master={selectedMaster}
+                date={form.date}
+                time={form.time}
+                onChange={update}
+                onNext={goNext}
+                error={submitError}
+              />
+            )}
+            {step === 4 && <StepContact name={form.name} phone={form.phone} onChange={update} onNext={goNext} />}
+            {step === 5 && (
+              <StepConfirm
+                service={selectedService}
+                master={selectedMaster}
+                date={form.date}
+                time={form.time}
+                name={form.name}
+                phone={form.phone}
+                onConfirm={handleConfirm}
+                submitting={submitting}
+                error={submitError}
+              />
+            )}
+          </>
         )}
       </div>
     </div>

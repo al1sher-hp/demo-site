@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const pool = getPool();
 
     const { rows: masterRows } = await pool.query(
-      `SELECT id, name FROM masters WHERE active = true ORDER BY name`,
+      `SELECT id, name, rating::float AS rating FROM masters WHERE active = true ORDER BY name`,
     );
     if (masterRows.length === 0) {
       res.status(200).json([]);
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
       masterRows.map((m) => ({
         id: m.id,
         name: m.name,
+        rating: m.rating,
         services: serviceRows.filter((r) => r.masterId === m.id).map((r) => r.serviceId),
         hours: hourRows.filter((r) => r.masterId === m.id),
       })),

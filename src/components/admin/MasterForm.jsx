@@ -33,6 +33,7 @@ function hoursFromMaster(master) {
 export default function MasterForm({ master, services, onDone, onCancel }) {
   const isEdit = Boolean(master);
   const [name, setName] = useState(master?.name || '');
+  const [rating, setRating] = useState(master?.rating ?? 4.9);
   const [serviceIds, setServiceIds] = useState(master?.serviceIds || []);
   const [hours, setHours] = useState(() => hoursFromMaster(master));
   const [submitting, setSubmitting] = useState(false);
@@ -55,10 +56,16 @@ export default function MasterForm({ master, services, onDone, onCancel }) {
       return;
     }
 
+    const parsedRating = Number(rating);
+    if (!Number.isFinite(parsedRating) || parsedRating < 0 || parsedRating > 5) {
+      setError('Reytingni 0 dan 5 gacha kiriting');
+      return;
+    }
+
     setSubmitting(true);
     setError(null);
     try {
-      const payload = { name: name.trim(), serviceIds, hours };
+      const payload = { name: name.trim(), rating: parsedRating, serviceIds, hours };
       if (isEdit) {
         await updateMaster({ id: master.id, active: master.active, ...payload });
       } else {
@@ -89,6 +96,19 @@ export default function MasterForm({ master, services, onDone, onCancel }) {
         onChange={(e) => setName(e.target.value)}
         placeholder="Ism"
         autoFocus
+      />
+
+      <label className="form-label">Reyting</label>
+      <input
+        className="form-input"
+        type="number"
+        inputMode="decimal"
+        min="0"
+        max="5"
+        step="0.1"
+        value={rating}
+        onChange={(e) => setRating(e.target.value)}
+        placeholder="4.9"
       />
 
       <label className="form-label">Xizmatlari</label>

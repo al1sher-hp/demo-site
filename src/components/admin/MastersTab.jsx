@@ -4,7 +4,7 @@ import { fetchAdminMasters, fetchAdminServices, toggleMasterActive } from '../..
 import { workdaysSummary } from '../../utils/schedule.js';
 import { avatarClassFor } from '../../utils/avatar.js';
 
-export default function MastersTab({ showToast }) {
+export default function MastersTab({ showToast, askConfirm }) {
   const [masters, setMasters] = useState([]);
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,14 +36,14 @@ export default function MastersTab({ showToast }) {
 
   async function handleToggleActive(master) {
     if (master.active) {
-      const ok = window.confirm(
-        "Mutaxassis yangi navbatlarda ko'rinmaydi, eski navbatlari saqlanadi. Davom etasizmi?",
-      );
+      const ok = await askConfirm({
+        body: "Mutaxassis yangi navbatlarda ko'rinmaydi, eski navbatlari saqlanadi. Davom etasizmi?",
+      });
       if (!ok) return;
     }
     try {
       await toggleMasterActive(master.id, !master.active);
-      showToast(master.active ? "O'chirildi ✓" : 'Yoqildi ✓');
+      showToast(master.active ? "O'chirildi" : 'Yoqildi');
       load();
     } catch {
       showToast("Bajarilmadi, qayta urinib ko'ring");
@@ -58,7 +58,7 @@ export default function MastersTab({ showToast }) {
         onDone={() => {
           setEditing(null);
           load();
-          showToast('Saqlandi ✓');
+          showToast('Saqlandi');
         }}
         onCancel={() => setEditing(null)}
       />

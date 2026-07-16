@@ -7,9 +7,9 @@ export const SEED_SERVICES = [
 ];
 
 export const SEED_MASTERS = [
-  { id: 'nilufar', name: 'Nilufar', services: ['soch-turmagi', 'soch-boyash'] },
-  { id: 'madina', name: 'Madina', services: ['manikyur'] },
-  { id: 'sevara', name: 'Sevara', services: ['pardoz', 'qosh-korreksiyasi'] },
+  { id: 'nilufar', name: 'Nilufar', services: ['soch-turmagi', 'soch-boyash'], rating: 4.9 },
+  { id: 'madina', name: 'Madina', services: ['manikyur'], rating: 4.9 },
+  { id: 'sevara', name: 'Sevara', services: ['pardoz', 'qosh-korreksiyasi'], rating: 4.9 },
 ];
 
 export const SEED_WORKING_HOURS = { start: '09:00', end: '20:00' };

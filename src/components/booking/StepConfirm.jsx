@@ -35,8 +35,14 @@ export default function StepConfirm({ service, master, date, time, name, phone, 
         </div>
       </div>
       {error && <div className="form-error">{error}</div>}
-      <button className="btn-primary btn-fixed-bottom" disabled={submitting} onClick={onConfirm}>
-        {submitting ? 'Yuborilmoqda...' : 'Yozilishni tasdiqlash'}
+      <button
+        type="button"
+        className="btn-primary btn-fixed-bottom"
+        disabled={submitting}
+        aria-disabled={submitting}
+        onClick={onConfirm}
+      >
+        {submitting ? 'Yuborilmoqda...' : 'Navbatni tasdiqlash'}
       </button>
     </div>
   );

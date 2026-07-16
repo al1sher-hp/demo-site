@@ -10,7 +10,7 @@ export default function Header() {
         Nilufar Beauty
       </div>
       <button className="header-cta" onClick={() => navigate('/yozilish')}>
-        Yozilish
+        Navbat olish
       </button>
     </header>
   );
